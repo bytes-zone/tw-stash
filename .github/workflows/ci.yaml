@@ -46,3 +46,9 @@ jobs:
         uses: golangci/golangci-lint-action@v6
         with:
           version: v1.60
+
+  typos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: crate-ci/typos@master
