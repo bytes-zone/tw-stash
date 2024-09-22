@@ -1,5 +1,5 @@
-FROM scratch
+FROM cgr.dev/chainguard/glibc-dynamic
 
-COPY ./artifact/tw-stash /tw-stash
+COPY --chown=nonroot:nonroot ./artifact/tw-stash /usr/local/bin/tw-stash
 
-ENTRYPOINT ["/tw-stash"]
+ENTRYPOINT ["/usr/local/bin/tw-stash"]
