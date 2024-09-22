@@ -82,8 +82,6 @@ jobs:
 
       - id: containerize
         run: |
-          chmod +x artifact/tw-stash
-
           TAG="$(sha256sum artifact/tw-stash | cut -f 1 -d ' ')"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           docker build . --tag "${{ env.IMAGE_NAME }}:${TAG}"
