@@ -10,7 +10,16 @@
       in {
         formatter = pkgs.nixpkgs-fmt;
 
-        devShell = pkgs.mkShell { packages = [ pkgs.rustc pkgs.cargo pkgs.rustfmt pkgs.clippy pkgs.rust-analyzer ]; };
+        devShell = pkgs.mkShell {
+          packages = [
+            pkgs.rustc
+            pkgs.cargo
+            pkgs.rustfmt
+            pkgs.clippy
+            pkgs.rust-analyzer
+            pkgs.libiconv
+          ];
+        };
       }
     );
 }
