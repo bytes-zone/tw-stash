@@ -17,3 +17,17 @@ jobs:
       - name: Build optimized binary
         run: |
           go build -ldflags="-s -w" -o tw-stash
+
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - name: Build optimized binary
+        run: |
+          go test
