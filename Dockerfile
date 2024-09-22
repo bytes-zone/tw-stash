@@ -1,5 +1,5 @@
 FROM scratch
 
-COPY ./target/release/tw-stash /tw-stash
+COPY ./artifact/tw-stash /tw-stash
 
 ENTRYPOINT ["/tw-stash"]
