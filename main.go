@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
-	"os"
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -14,9 +14,5 @@ func main() {
 	http.HandleFunc("/", handler)
 
 	fmt.Println("Serving on :8080")
-	err := http.ListenAndServe(":8080", nil)
-	if err != nil {
-		fmt.Println("Error starting server: ", err)
-		os.Exit(1)
-	}
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
