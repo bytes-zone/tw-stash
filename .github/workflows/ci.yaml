@@ -18,6 +18,12 @@ jobs:
         run: |
           go build -ldflags="-s -w -extldflags=-static" -o tw-stash
 
+          file artifact/tw-stash
+          if file artifact/tw-stash | grep "dynamically linked" > /dev/null; then
+            echo "tw-stash is dynamically linked. This will break the container."
+            exit 1
+          fi
+
       - name: Save release
         uses: actions/upload-artifact@v4
         with:
@@ -82,8 +88,6 @@ jobs:
 
       - id: containerize
         run: |
-          file artifact/tw-stash
-
           TAG="$(sha256sum artifact/tw-stash | cut -f 1 -d ' ')"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           docker build . --tag "${{ env.IMAGE_NAME }}:${TAG}"
