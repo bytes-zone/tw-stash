@@ -18,8 +18,8 @@ jobs:
         run: |
           CGO_ENABLED=0 go build -ldflags="-s -w" -o tw-stash
 
-          file artifact/tw-stash
-          if file artifact/tw-stash | grep "dynamically linked" > /dev/null; then
+          file tw-stash
+          if file tw-stash | grep "dynamically linked" > /dev/null; then
             echo "tw-stash is dynamically linked. This will break the container."
             exit 1
           fi
