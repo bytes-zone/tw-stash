@@ -16,7 +16,7 @@ jobs:
 
       - name: Build optimized binary
         run: |
-          go build -ldflags="-s -w" -o tw-stash
+          go build -ldflags="-s -w -extldflags=-static" -o tw-stash
 
       - name: Save release
         uses: actions/upload-artifact@v4
