@@ -16,7 +16,7 @@ jobs:
 
       - name: Build optimized binary
         run: |
-          go build -ldflags="-s -w -extldflags=-static" -o tw-stash
+          CGO_ENABLED=0 go build -ldflags="-s -w" -o tw-stash
 
           file artifact/tw-stash
           if file artifact/tw-stash | grep "dynamically linked" > /dev/null; then
