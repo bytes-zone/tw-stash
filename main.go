@@ -24,17 +24,16 @@ func main() {
 		log.Fatal("SECRET is required")
 	}
 
-	// TODO: https://github.com/redis/go-redis?tab=readme-ov-file#connecting-via-a-redis-url
 	redisUrl := os.Getenv("REDIS_URL")
 	if redisUrl == "" {
-		redisUrl = "localhost:6379"
+		redisUrl = "redis://localhost:6379"
+	}
+	opts, err := redis.ParseURL(redisUrl)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     redisUrl,
-		Password: "", // no password set
-		DB:       0,  // use default DB
-	})
+	rdb := redis.NewClient(opts)
 
 	ctx := context.Background()
 
