@@ -19,6 +19,11 @@ type Task struct {
 }
 
 func main() {
+	secret := os.Getenv("SECRET")
+	if secret == "" {
+		log.Fatal("SECRET is required")
+	}
+
 	// TODO: https://github.com/redis/go-redis?tab=readme-ov-file#connecting-via-a-redis-url
 	redisUrl := os.Getenv("REDIS_URL")
 	if redisUrl == "" {
@@ -41,6 +46,12 @@ func main() {
 	http.HandleFunc("/stash", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		r.Header.Get("Authorization")
+		if r.Header.Get("Authorization") != fmt.Sprintf("Bearer %s", secret) {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 
@@ -75,6 +86,12 @@ func main() {
 	http.HandleFunc("/slurp", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		r.Header.Get("Authorization")
+		if r.Header.Get("Authorization") != fmt.Sprintf("Bearer %s", secret) {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 
