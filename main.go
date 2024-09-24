@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -18,6 +19,7 @@ type Task struct {
 }
 
 func main() {
+	// TODO: https://github.com/redis/go-redis?tab=readme-ov-file#connecting-via-a-redis-url
 	redisUrl := os.Getenv("REDIS_URL")
 	if redisUrl == "" {
 		redisUrl = "localhost:6379"
@@ -28,6 +30,8 @@ func main() {
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
+
+	ctx := context.Background()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "https://github.com/bytes-zone/tw-stash", 307)
@@ -44,21 +48,22 @@ func main() {
 		err := json.NewDecoder(r.Body).Decode(&task)
 		if err != nil {
 			http.Error(w, "Could not decode task", http.StatusBadRequest)
+			return
 		}
 
 		if task.Description == "" {
 			http.Error(w, "Description is required", http.StatusBadRequest)
+			return
 		}
 
-		taskBytes, err := json.Marshal(task)
-		if err != nil {
-			http.Error(w, "Could not encode task", http.StatusInternalServerError)
+		redisErr := rdb.LPush(ctx, "tasks", task)
+		if redisErr != nil {
+			log.Println(redisErr)
+			http.Error(w, "Could not add task", http.StatusInternalServerError)
+			return
 		}
 
-		_, err = w.Write(taskBytes)
-		if err != nil {
-			http.Error(w, "Could not write task", http.StatusInternalServerError)
-		}
+		fmt.Fprintln(w, "Task added")
 	})
 
 	fmt.Println("Serving on :8080")
