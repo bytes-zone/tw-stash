@@ -72,6 +72,38 @@ func main() {
 		fmt.Fprintln(w, "Task added")
 	})
 
+	http.HandleFunc("/slurp", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		resp := rdb.LRange(ctx, "tasks", 0, -1)
+		if resp.Err() != nil {
+			log.Println(resp.Err())
+			http.Error(w, "Could not fetch tasks", http.StatusInternalServerError)
+			return
+		}
+
+		bytes := []byte{'['}
+		for i, task := range resp.Val() {
+			if i != 0 {
+				bytes = append(bytes, ',')
+			}
+
+			bytes = append(bytes, task...)
+		}
+		bytes = append(bytes, ']')
+
+		w.Header().Set("Content-Type", "application/json")
+
+		_, err := w.Write(bytes)
+		if err != nil {
+			log.Println(err)
+			http.Error(w, "Could not write tasks", http.StatusInternalServerError)
+		}
+	})
+
 	fmt.Println("Serving on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
