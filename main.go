@@ -56,9 +56,15 @@ func main() {
 			return
 		}
 
-		redisErr := rdb.LPush(ctx, "tasks", task)
-		if redisErr != nil {
-			log.Println(redisErr)
+		szd, err := json.Marshal(task)
+		if err != nil {
+			http.Error(w, "Could not marshal task", http.StatusInternalServerError)
+			return
+		}
+
+		resp := rdb.LPush(ctx, "tasks", szd)
+		if resp.Err() != nil {
+			log.Println(resp.Err())
 			http.Error(w, "Could not add task", http.StatusInternalServerError)
 			return
 		}
