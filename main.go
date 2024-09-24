@@ -101,6 +101,14 @@ func main() {
 		if err != nil {
 			log.Println(err)
 			http.Error(w, "Could not write tasks", http.StatusInternalServerError)
+			return
+		}
+
+		delResp := rdb.Del(ctx, "tasks")
+		if delResp.Err() != nil {
+			log.Println(delResp.Err())
+			http.Error(w, "Could not trim tasks", http.StatusInternalServerError)
+			return
 		}
 	})
 
