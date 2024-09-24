@@ -32,6 +32,10 @@ func main() {
 			http.Error(w, "Could not decode task", http.StatusBadRequest)
 		}
 
+		if task.Description == "" {
+			http.Error(w, "Description is required", http.StatusBadRequest)
+		}
+
 		taskBytes, err := json.Marshal(task)
 		if err != nil {
 			http.Error(w, "Could not encode task", http.StatusInternalServerError)
