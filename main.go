@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/redis/go-redis/v9"
 )
 
 type Task struct {
@@ -15,6 +18,17 @@ type Task struct {
 }
 
 func main() {
+	redisUrl := os.Getenv("REDIS_URL")
+	if redisUrl == "" {
+		redisUrl = "localhost:6379"
+	}
+
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     redisUrl,
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "https://github.com/bytes-zone/tw-stash", 307)
 	})
