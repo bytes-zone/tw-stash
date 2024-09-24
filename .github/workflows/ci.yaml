@@ -96,7 +96,7 @@ jobs:
 
           sleep 1
 
-          curl --fail http://localhost:8080
+          curl --fail http://localhost:8080/healthz
 
       - name: Log into the container registry
         uses: docker/login-action@v3
